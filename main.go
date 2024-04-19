@@ -20,41 +20,30 @@
 // 	fmt.Println(<-ch)
 // }
 // 2-masala
-// package main
 
-// import (
-// 	"fmt"
-// 	"io"
-// 	"log"
-// 	"os"
-// )
+package main
 
-// func main() {
-//     var resault string
-// 	files := []string{"file1.txt", "file2.txt", "file3.txt"}
+import (
+	"fmt"
+	"log"
+	"os"
+)
 
-// 	for _, file := range files {
-//         str,err:=ReadFile(file)
-//         if err!=nil{
-//             log.Fatal(err)
-//             continue
-//         }
-//         resault+=str
-// 	}
-//     fmt.Println("Birlashtirilgan content: ", resault)
-// }
+func ReadFileGo(file string, ch chan string) {
+	str, err := os.ReadFile(file)
+	if err != nil {
+		log.Fatal(err)
+	}
+	ch <- string(str)
+}
 
-// func ReadFile(str string) (string, error) {
-// 	file, err := os.Open(str)
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	defer file.Close()
-// 	res, err := io.ReadAll(file)
-// 	if err != nil {
-// 		return "", err
-// 	}
+func main() {
+	ch := make(chan string)
+	go ReadFileGo("file1.txt", ch)
+	go ReadFileGo("file2.txt", ch)
+	go ReadFileGo("file3.txt", ch)
+	for i := 0; i < 3; i++ {
+		fmt.Println(<-ch)
+	}
+}
 
-// 	return string(res), nil
-
-// }
